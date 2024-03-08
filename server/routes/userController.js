@@ -7,7 +7,15 @@ const User = require('../models/userModel');
 
 router.post('/register', async (req, res) => {
   try {    
-    const { username, password } = req.body;
+    const { 
+            firstName,
+            lastName,
+            gender,
+            phoneNo,
+            email,
+            password,
+            confirmPassword 
+          } = req.body;
 
     const existingUser = await User.findOne({ username });
     if (existingUser) {
@@ -18,8 +26,13 @@ router.post('/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const user = new User({
-      username,
+      firstName,
+      lastName,
+      gender,
+      phoneNo,
+      email,
       password: hashedPassword,
+      confirmPassword
     });
 
     const savedUser = await user.save();
@@ -35,9 +48,9 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ error: 'Username not found' });
     }
